@@ -19,5 +19,6 @@
     output-> [number,rest of the string] or null
 
 ### String
+
 ### Array
 ### Object
