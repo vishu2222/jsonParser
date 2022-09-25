@@ -1,38 +1,38 @@
 
-
-function nullParser(input) {
-    if (!input.startsWith('null')) {
-        return null;
-    }
-    return [null, input.slice(4, input.length)]
+// null parser
+function nullParser (input) {
+  if (input.startsWith('null')) {
+    return [null, input.slice(4)]
+  }
+  return null
 }
 
-
-function booleanParser(input) {
-    if (input.startsWith('true')) {
-        return [input.slice(0, 4), input.slice(4, input.length)]
-    }
-    if (input.startsWith('false')) {
-        return [input.slice(0, 5), input.slice(4, input.length)]
-    }
-    return null;
+// booleanParser
+function booleanParser (input) {
+  if (input.startsWith('true')) {
+    return [true, input.slice(4)]
+  }
+  if (input.startsWith('false')) {
+    return [false, input.slice(5)]
+  }
+  return null
 }
 
-function numberParser(input) {
-    result = input.match(/^([-+]?[.]?[0-9]|[0-9])/g)
-    if(result.length===0){return null}
-    
+// number parser
+function numberParser (input) {
+  result = input.match(/^([-+]?[.]?[0-9]|[0-9])/g)
+  if (result === null || result.length === 0) { return null }
+  const reg = /^([-+]?[0-9]+[.]?[0-9]*)([eE][+-]?[0-9]+)?/
+  const num = input.match(reg)
+  const str = input.replace(reg, '')
+  return [num[0], str]
 }
 
-console.log(numberParser('1'))
+const cases = ['0', '-0', '-0.0', '-1.23', '0.5', '0.0', '12.323', '0.', '-1', '.01e',
+  '.0', '+0.', '+4', '00', '00.', '+0.05', '1.2Eabc', '1.2E2bc', '1.abc',
+  '1e-5', '0e3', '0.1e1', '1.e9', '1e0', '2E256', '-12.e45', '2e+-4',
+  'a.', '.a', '-', 'e1', '.', '-+', 'abc198'] // -01?  1.?
 
-
-
-
-
-
-
-
-// test cases for numberparser
-// const passCases = ['0','-0','-0.0', '-1.23','0.5', '0.0','12.323', '0.']
-// const failCases = [ '.0', 'a.', '.a', '-']
+for (const input of cases) {
+  console.log(input, '\t', numberParser(input))
+}
