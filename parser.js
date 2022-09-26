@@ -7,6 +7,8 @@ function nullParser (input) {
   return null
 }
 
+console.log(nullParser('nullABC'))
+
 // booleanParser
 function booleanParser (input) {
   if (input.startsWith('true')) {
@@ -18,21 +20,18 @@ function booleanParser (input) {
   return null
 }
 
+console.log(booleanParser('trueABC'))
+
 // number parser
 function numberParser (input) {
-  result = input.match(/^([-+]?[.]?[0-9]|[0-9])/g)
-  if (result === null || result.length === 0) { return null }
-  const reg = /^([-+]?[0-9]+[.]?[0-9]*)([eE][+-]?[0-9]+)?/
-  const num = input.match(reg)
-  const str = input.replace(reg, '')
-  return [num[0], str]
+  const regex = /^-?(([1-9]\d*)|0)(\.\d+)?((e|E)[+-]?\d+)?/
+  const output = input.match(regex)
+  if (output === null) {
+    return null
+  }
+  return [Number(output[0]), input.slice(output[0].length)]
 }
 
-const cases = ['0', '-0', '-0.0', '-1.23', '0.5', '0.0', '12.323', '0.', '-1', '.01e',
-  '.0', '+0.', '+4', '00', '00.', '+0.05', '1.2Eabc', '1.2E2bc', '1.abc',
-  '1e-5', '0e3', '0.1e1', '1.e9', '1e0', '2E256', '-12.e45', '2e+-4',
-  'a.', '.a', '-', 'e1', '.', '-+', 'abc198'] // -01?  1.?
+console.log(numberParser('123abc'))
 
-for (const input of cases) {
-  console.log(input, '\t', numberParser(input))
-}
+//
