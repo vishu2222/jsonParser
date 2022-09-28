@@ -45,8 +45,15 @@ function strParser(input) {
     let i = 0
     let str = ''
     let escapeCharacters = {
-        '"': '\"', '\\': '\\', '/': '\/', 'b': '/b', 'f': '/f',
-        'n': '\n', 'r': '\r', 't': '\t', 'u':''
+        '"': '\"',
+        '\\': '\\',
+        '/': '\/',
+        'b': '/b',
+        'f': '/f',
+        'n': '\n',
+        'r': '\r',
+        't': '\t',
+        'u':''
     }
     let char = input[i]
     if (char !== '"') {
@@ -55,21 +62,24 @@ function strParser(input) {
     while (char !== undefined) {
         i += 1
         char = input[i]
-        console.log(char, '\t', str) 
+        console.log(char, '\t', str)                           //
         if (char === '"') {       //check for end of string?
-            return [str,input.slice(i)]
+            return [str,input.slice(i+1)]
         }
         if (char === '\\') {      // if back slash is encountered
             i += 1
             char = input[i] 
-            if (!escapeCharacters.hasOwnProperty(char)) { return null }
-            else if (char !== 'u') { str += escapeCharacters[char] }
+            if (!escapeCharacters.hasOwnProperty(char)) { return null 
+            }else if (char === '"') {       //check for end of string?
+                return [str, input.slice(i)]
+            }else if (char !== 'u') { str += escapeCharacters[char] }
             else if (char === 'u') {
                 const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4]
                  //https://stackoverflow.com/questions/7063255/how-can-i-convert-a-string-into-a-unicode-character
                 str+=String.fromCharCode(parseInt(temp, 16)) 
                 i += 4;
             }
+            
         }
         else {
             str += char                 // if not a \ or "
@@ -78,9 +88,11 @@ function strParser(input) {
     return null
   }
   
-  const input = '"abcdef\\t.1\\u006Fxyz\\\\abcdefghabcd'
-  console.log(strParser(input))
-  
-  
-  
-  console.log(stringParser('"..."'))
+
+// const input1 = '"abcdef\\t.1\\u006Fxyz\\\\abcd"efghabcd'
+const input2 = '"abcdef\\t.1\\u006Fxyz\\\\abcdefghi\\"efghabcd'
+// const input3 = '"RT @TwitterDev: 1/ Today we’re sharing our vision for the future of the Twitter API platform!\nhttps://t.co/XweGngmxlP"'
+// console.log(strParser(input1))
+console.log(strParser(input2))
+// console.log(strParser(input3))
+
