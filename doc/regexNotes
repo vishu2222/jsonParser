@@ -1,0 +1,93 @@
+//
+
+let str= "freeCodeCamp freeCodeCamp freeCodeCamp";
+
+// console.log(/Code/.test(str));                     //test a pattern is in a string or not
+// console.log(/c/i.test(str),' ',/c/.test(str))      // flag i to ignore case (capital or small)
+// console.log(str.match(/camp/i))                    // extracting matches
+// console.log(str.match(/camp/ig))                   //matching all possible patterns untill the end of the string
+// console.log(str.match(/co.../ig))                  //matches all 5 leter patterns starting with co{n dots => 2+n letters}
+// console.log(str.match(/cod[ieo]camp/ig))           //matches cod[any of i,e,o]camp  example codicamp
+// console.log(str.match(/[d-g]/ig))                   //match all letters from d to g like d,e,f,g
+
+
+let newStr='vishu1_vishu@2-vishu&3'
+
+// console.log(newStr.match(/[a-z0-9]/ig))            //match all letters and numbers
+//console.log(newStr.match(/v|2|@/ig))                // mach v or 2 or @
+//console.log(newStr.match(/[^ae1_]/gi))              //dont match these characters
+
+let str1="'vvishu___vvvivishu1822  sss 2'"
+
+//console.log(str1.match(/v+/gi))                       //To find the number of repetions of a letter (one or more times)
+//console.log(str1.match(/v*/gi))                      //To find the number of repetions of a letter (zero or more times)
+//console.log(str1.match(/'v{1,3}i/gi))                  //to find atleast 1 to 3 times that v repeates before i in the given string
+//console.log(str1.match(/_{2,}v/gi))                   // match _ occuring atleast 2 times before the letter v
+//console.log(str1.match(/u_{3}v/gi))                     // match _ occuring eactly 3 times before the letter v and after the letter u
+
+
+//console.log(str1.match(/v[a-z]*u/gi))                  // find largest letter patterns starting with v and ending with u
+//console.log(str1.match(/v[a-z]*?u/gi))                 // find smallest letter patterns starting with v and ending with u
+//console.log(str1.match(/^'vvis/gi))                     //matching beginning string patterns /^bigining part/
+// console.log(str1.match(/22$/gi))                       //matching beginning string patterns /ending part$/
+
+//console.log(str1.match(/\w/gi))                        //match all alphanumerals and underscore _
+//console.log(str1.match(/\W/gi))                          // match every thing except letters and numbers
+//console.log(str1.match(/\d/gi))                        // match all numbers
+//console.log(str1.match(/\D/gi))                        // match all non numbers
+//console.log(str1.match(/\s/gi))                          //match all white spaces
+//console.log(str1.match(/\S/gi))                        //everything except white spaces
+
+
+
+let s='color'
+//console.log(s.match(/colou?r/gi))                 //match if u exists or not
+
+
+let password = "abc123";
+
+//console.log(password.match(/(?=\w{3,6})(?=\D*\d)/)) //password should have 3 to 6 characters and at least one number
+// (?=) means to look ahead to search for patterns. we can use (?= )(?= ) to find multiple patterns
+
+                                       //(capture groups)
+
+//   /(\w+)\s\1/      matches any word that occurs twice separated by a space
+
+//    "Code Camp".replace(/(\w+)\s(\w+)/, '$2 $1');             // returns camp code
+
+// use  String.prototype.trim()  to remove white spaces at the begining and ending of a string
+
+
+
+//          .                    any character except newLine
+//          \d                   Digits 0-9
+//          \D                   Not a digit 0-9
+//          \w                   word character (_,a-z,A-Z,0-9)
+//          \W                   Not a word character
+//          \s                   (space, tab, newLine)
+//          \S                   Not (space, tab, newLine)
+
+
+//Anchors
+
+//          \b                   word boundary(search words only if they have a boundary(seperated by a space newLine))
+//                                (for 2 boundary search \b\wordb)
+//          \B                   Not a word boundary
+//           ^                   Beginning of a string
+//           $                   End of a string
+
+
+//          []                   character set, matches characters in brackets
+//          [^]                  matches characters not in brackets
+//           |                   Either or or
+//          ( )                  Group
+
+
+
+// Quantifiers
+
+//          *                   0 or more
+//          +                   1 or more
+//          ?                   o or 1
+//         {3}                  exact number
+//         {3,4}                range of numbers {min,max}
