@@ -16,9 +16,10 @@
 
 ### Number
     input -> string
-    output-> [number,rest of the string] or null
+    output-> [number, rest of the string] or null
 
 ### String
 
 ### Array
+
 ### Object
