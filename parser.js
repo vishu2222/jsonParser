@@ -55,6 +55,7 @@ function stringParser (input) {
         return null
       } else if (char === 'u') {
         const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4] // validate [afAF]
+        if (temp.match(/[a-f0-9]{4}/i) === null) { return null }
         str += String.fromCharCode(parseInt(temp, 16))
         i += 4
       }
