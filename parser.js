@@ -20,7 +20,7 @@ function booleanParser (input) {
 
 // number parser
 function numberParser (input) {
-  const regex = /^-?([1-9]\d*|0)(\.\d+)?((e|E)[+-]?\d+)?/
+  const regex = /^-?([1-9]\d*|0)(\.\d+)?([eE][+-]?\d+)?/
   const numOutput = input.match(regex)
   if (numOutput === null) {
     return null
