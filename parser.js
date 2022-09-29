@@ -7,8 +7,6 @@ function nullParser (input) {
   return null
 }
 
-// console.log('nullParser', nullParser('nullABC'))
-
 // booleanParser
 function booleanParser (input) {
   if (input.startsWith('true')) {
@@ -20,8 +18,6 @@ function booleanParser (input) {
   return null
 }
 
-// console.log('booleanParser', booleanParser('trueABC'))
-
 // number parser
 function numberParser (input) {
   const regex = /^-?(([1-9]\d*)|0)(\.\d+)?((e|E)[+-]?\d+)?/
@@ -31,8 +27,6 @@ function numberParser (input) {
   }
   return [Number(numOutput[0]), input.slice(numOutput[0].length)]
 }
-
-// console.log('numberParser', numberParser('0x123'))
 
 // string parser
 function stringParser (input) {
@@ -73,8 +67,6 @@ function stringParser (input) {
   return null
 }
 
-// console.log('String parser', stringParser('"..."'))
-
 // comma parser
 function commaParser (input) {
   if (!input.startsWith(',')) { return null }
@@ -88,15 +80,13 @@ function valueParser (input) {
   if (input.startsWith('n')) { parser = nullParser }
   if (input.startsWith('t') || input.startsWith('f')) { parser = booleanParser }
   if (input.startsWith('"')) { parser = stringParser }
-  if(input.startsWith('[')) {parser = arrayParser}
+  if (input.startsWith('[')) { parser = arrayParser }
   if (num.includes(input[0])) { parser = numberParser }
   if (parser === null) { return null }
   const parsed = parser(input)
   if (parsed === null) { return null }
   return [parsed[0], parsed[1]]
 }
-
-// console.log(valueParser())
 
 // Array parser
 function arrayParser (input) {
@@ -121,5 +111,32 @@ function arrayParser (input) {
   return null
 }
 
-const input = '[-123,"1",12,13,true,null]"abc"'
-console.log(arrayParser(input))
+// object parser
+function objectParser (input) {
+  const obj = {}
+  if (!input.startsWith('{')) { return null }
+  if (input[1] === ' ' && input[2] === '}') { return [obj, input.slice(3)] }
+  input = input.slice(1)
+  do {
+    if (input[0] !== ' ') { return null }
+    input = input.slice(1)
+    if (input[0] === '}') { return [obj, input.slice(1)] }
+    if (input[0] !== '"') { return null }
+    let parsed = stringParser(input)
+    if (parsed === null) { return null }
+    const key = parsed[0]
+    input = parsed[1]
+    if (input[0] !== ' ') { return null }
+    input = input.slice(1)
+    if (input[0] !== ':') { return null }
+    input = input.slice(1)
+    parsed = valueParser(input)
+    const val = parsed[0]
+    input = parsed[1]
+    obj[key] = val
+    if (input.startsWith('}')) { return [obj, input.slice(1)] }
+    if (!input.startsWith(',')) { return null }
+    input = input.slice(1)
+  }
+  while (input[0] !== undefined)
+}
