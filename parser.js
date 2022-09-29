@@ -101,7 +101,7 @@ function valueParser (input) {
 function arrayParser (input) {
   if (!input.startsWith('[')) { return null }
   input = input.slice(1)
-  let arr = []
+  const arr = []
   while (input[0] !== undefined) {
     if (input[0] === ']') { return [arr, input.slice(1)] }
     let val = valueParser(input)
