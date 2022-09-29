@@ -58,9 +58,8 @@ function stringParser (input) {
         str += String.fromCharCode(parseInt(temp, 16))
         i += 4
       }
-    } else {
-      str += char // if not a \ or "
     }
+    str += char // if not a \ or "
   }
   return null
 }
