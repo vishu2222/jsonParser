@@ -101,7 +101,7 @@ function valueParser (input) {
 function arrayParser (input) {
   const arr = []
   if (!input.startsWith('[')) { return null }
-  if (input[1] === ' ' && input[2] === ']') { return [arr, input.slice(3)] }
+  if (input[1] === ' ' && input[2] === ']') { return [arr, input.slice(3)] } // empty array has a space
   input = input.slice(1)
   while (input[0] !== undefined) {
     if (input[0] === ']') { return [arr, input.slice(1)] }
@@ -111,9 +111,9 @@ function arrayParser (input) {
     input = val[1]
     val = commaParser(input)
     if (val === null) {
-      if (input[0] !== ']') { return null }
+      if (input[0] !== ']') { return null } // if no comma array should end
     } else {
-      if (input[1] === ']') { return null }
+      if (input[1] === ']') { return null } // after comma we cant have ]
       input = val[1]
     }
   }
