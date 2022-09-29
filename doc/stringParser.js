@@ -62,7 +62,7 @@ function strParser(input) {
     while (char !== undefined) {
         i += 1
         char = input[i]
-        console.log(char, '\t', str)                           //
+        // console.log(char, '\t', str)                           //
         if (char === '"') {       //check for end of string?
             return [str,input.slice(i+1)]
         }
@@ -90,7 +90,7 @@ function strParser(input) {
   
 
 // const input1 = '"abcdef\\t.1\\u006Fxyz\\\\abcd"efghabcd'
-const input2 = '"abcdef\\t.1\\u006Fxyz\\\\abcdefghi\\"efghabcd'
+const input2 = '"abcdef\\t.1\\u006Fxyz\\\\abcdefghi\\\\"efghabcd"'
 // const input3 = '"RT @TwitterDev: 1/ Today we’re sharing our vision for the future of the Twitter API platform!\nhttps://t.co/XweGngmxlP"'
 // console.log(strParser(input1))
 console.log(strParser(input2))
