@@ -81,6 +81,7 @@ function valueParser (input) {
   if (input.startsWith('t') || input.startsWith('f')) { parser = booleanParser }
   if (input.startsWith('"')) { parser = stringParser }
   if (input.startsWith('[')) { parser = arrayParser }
+  if (input.startsWith('{')) { parser = objectParser }
   if (num.includes(input[0])) { parser = numberParser }
   if (parser === null) { return null }
   const parsed = parser(input)
