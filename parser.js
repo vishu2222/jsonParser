@@ -34,27 +34,25 @@ function stringParser (input) {
   const escapeCharacters = {
     '"': '"',
     '/': '/',
+    '\\': '\\',
     b: '/b',
     f: '\f',
     n: '\n',
     r: '\r',
     t: '\t',
-    '\\': '\\',
     u: null
   }
   let i = 0
   let str = ''
-  while (input[i + 1] !== undefined) {
+  while (input[i + 1] !== undefined) { // while end of input string is not reached
     i += 1
     let char = input[i]
-    if (char === '"') { // end of string?
-      return [str, input.slice(i + 1)]
-    }
-    if (char === '\\') { // if back slash is encountered
+    if (char === '"') { return [str, input.slice(i + 1)] } // end of string?
+    if (char === '\\') {
       i += 1
       char = input[i]
       if (!escapeCharacters.hasOwnProperty(char)) {
-        return null // else if (char === '"') {return [str, input.slice(i)]}
+        return null
       } else if (char === 'u') {
         const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4] // validate [afAF]
         str += String.fromCharCode(parseInt(temp, 16))
