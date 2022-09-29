@@ -20,7 +20,7 @@ function booleanParser (input) {
 
 // number parser
 function numberParser (input) {
-  const regex = /^-?(([1-9]\d*)|0)(\.\d+)?((e|E)[+-]?\d+)?/
+  const regex = /^-?([1-9]\d*|0)(\.\d+)?((e|E)[+-]?\d+)?/
   const numOutput = input.match(regex)
   if (numOutput === null) {
     return null
@@ -56,7 +56,7 @@ function stringParser (input) {
       if (!escapeCharacters.hasOwnProperty(char)) {
         return null // else if (char === '"') {return [str, input.slice(i)]}
       } else if (char === 'u') {
-        const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4]
+        const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4] // validate [afAF]
         str += String.fromCharCode(parseInt(temp, 16))
         i += 4
       }
