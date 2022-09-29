@@ -1,4 +1,8 @@
-# jsonParser
+# JSONParserJavaScript
+JSON strings have values that need to be parsed for a language to interpret it. Various types like numbers
+strings, boolean, array and object are encoded inthe JSON string. JSON structure is described at [json.org](https://www.json.org/json-en.html) and 
+in detail at [link](https://www.ietf.org/rfc/rfc4627.txt).
+
 
 * Input -> a string
 * output -> parsed javaScript value
