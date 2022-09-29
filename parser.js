@@ -99,9 +99,10 @@ function valueParser (input) {
 
 // Array parser
 function arrayParser (input) {
-  if (!input.startsWith('[')) { return null }
-  input = input.slice(1)
   const arr = []
+  if (!input.startsWith('[')) { return null }
+  if (input[1] === ' ' && input[2] === ']') { return [arr, input.slice(3)] }
+  input = input.slice(1)
   while (input[0] !== undefined) {
     if (input[0] === ']') { return [arr, input.slice(1)] }
     let val = valueParser(input)
