@@ -7,7 +7,7 @@ function nullParser (input) {
   return null
 }
 
-console.log('nullParser', nullParser('nullABC'))
+// console.log('nullParser', nullParser('nullABC'))
 
 // booleanParser
 function booleanParser (input) {
@@ -20,7 +20,7 @@ function booleanParser (input) {
   return null
 }
 
-console.log('booleanParser', booleanParser('trueABC'))
+// console.log('booleanParser', booleanParser('trueABC'))
 
 // number parser
 function numberParser (input) {
@@ -32,7 +32,7 @@ function numberParser (input) {
   return [Number(numOutput[0]), input.slice(numOutput[0].length)]
 }
 
-console.log('numberParser', numberParser('0x123'))
+// console.log('numberParser', numberParser('0x123'))
 
 // string parser
 function stringParser (input) {
@@ -73,6 +73,51 @@ function stringParser (input) {
   return null
 }
 
-console.log('String parser', stringParser('"..."'))
+// console.log('String parser', stringParser('"..."'))
+
+// comma parser
+function commaParser (input) {
+  if (!input.startsWith(',')) { return null }
+  return [',', input.slice(1)]
+}
+
+// value parser
+function valueParser (input) {
+  let parser = null
+  const num = ['-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+  if (input.startsWith('n')) { parser = nullParser }
+  if (input.startsWith('t') || input.startsWith('f')) { parser = booleanParser }
+  if (input.startsWith('"')) { parser = stringParser }
+  if (num.includes(input[0])) { parser = numberParser }
+  if (parser === null) { return null }
+  const parsed = parser(input)
+  if (parsed === null) { return null }
+  return [parsed[0], parsed[1]]
+}
+
+// console.log(valueParser())
 
 // Array parser
+function arrayParser (input) {
+  if (!input.startsWith('[')) { return null }
+  input = input.slice(1)
+  let arr = []
+  while (input[0] !== undefined) {
+    if (input[0] === ']') { return [arr, input.slice(1)] }
+    let val = valueParser(input)
+    if (val === null) { return null }
+    arr.push(val[0])
+    input = val[1]
+    val = commaParser(input)
+    if (val === null) {
+      if (input[0] !== ']') { return null }
+    } else {
+      if (input[1] === ']') { return null }
+      input = val[1]
+    }
+  }
+  return null
+}
+
+const input = '[-123,"1",12,13,true,null]"abc"'
+console.log(arrayParser(input))
