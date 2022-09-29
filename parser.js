@@ -21,11 +21,11 @@ function booleanParser (input) {
 // number parser
 function numberParser (input) {
   const regex = /^-?([1-9]\d*|0)(\.\d+)?([eE][+-]?\d+)?/
-  const numOutput = input.match(regex)
-  if (numOutput === null) {
+  const regOutput = input.match(regex)
+  if (regOutput === null) {
     return null
   }
-  return [Number(numOutput[0]), input.slice(numOutput[0].length)]
+  return [Number(regOutput[0]), input.slice(regOutput[0].length)]
 }
 
 // string parser
