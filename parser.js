@@ -1,6 +1,13 @@
+// trim spaces
+function spaceTrim (input) {
+  const trimRegex = /^[\s\r]*/ // matches ' '\n\r\t
+  const match = input.match(trimRegex)[0]
+  return input.slice(match.length)
+}
 
 // null parser
 function nullParser (input) {
+  input = spaceTrim(input)
   if (input.startsWith('null')) {
     return [null, input.slice(4)]
   }
@@ -9,6 +16,7 @@ function nullParser (input) {
 
 // booleanParser
 function booleanParser (input) {
+  input = spaceTrim(input)
   if (input.startsWith('true')) {
     return [true, input.slice(4)]
   }
@@ -20,6 +28,7 @@ function booleanParser (input) {
 
 // number parser
 function numberParser (input) {
+  input = spaceTrim(input)
   const regex = /^-?([1-9]\d*|0)(\.\d+)?([eE][+-]?\d+)?/
   const regOutput = input.match(regex)
   if (regOutput === null) {
@@ -30,6 +39,7 @@ function numberParser (input) {
 
 // string parser
 function stringParser (input) {
+  input = spaceTrim(input)
   if (!input.startsWith('"')) { return null }
   const escapeCharacters = {
     '"': '"',
@@ -54,13 +64,13 @@ function stringParser (input) {
       if (!escapeCharacters.hasOwnProperty(char)) {
         return null
       } else if (char === 'u') {
-        const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4] // validate [afAF]
+        const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4] // input.slice(i+1,i+5)
         if (temp.match(/[a-f0-9]{4}/i) === null) { return null }
         str += String.fromCharCode(parseInt(temp, 16))
         i += 4
       }
     }
-    str += char // if not a \ or "
+    str += char // for any code point other than \ or "
   }
   return null
 }
@@ -89,6 +99,7 @@ function valueParser (input) {
 
 // Array parser
 function arrayParser (input) {
+  input = spaceTrim(input)
   const arr = []
   if (!input.startsWith('[')) { return null }
   if (input[1] === ' ' && input[2] === ']') { return [arr, input.slice(3)] } // empty array has a space
@@ -112,6 +123,7 @@ function arrayParser (input) {
 
 // object parser
 function objectParser (input) {
+  input = spaceTrim(input)
   const obj = {}
   if (!input.startsWith('{')) { return null }
   if (input[1] === ' ' && input[2] === '}') { return [obj, input.slice(3)] }
@@ -139,3 +151,6 @@ function objectParser (input) {
   }
   while (input[0] !== undefined)
 }
+
+// const input = '{ "a" :{ "1" :"val"}, "b" :false, "c" :[1,null,3,["i","j"],{}], "d" :2}xyz'
+// console.log(objectParser(input))
