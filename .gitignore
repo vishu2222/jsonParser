@@ -4,3 +4,4 @@ data.txt
 *.json
 test2.js
 oldParser.js
+stringParser.js
