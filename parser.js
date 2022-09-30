@@ -1,9 +1,11 @@
 // trim spaces
 function spaceTrim (input) {
   const trimRegex = /^[\s\r]*/ // matches ' '\n\r\t
-  const match = input.match(trimRegex)[0]
-  return input.slice(match.length)
+  const match = input.match(trimRegex)
+  if (match === null) { return input }
+  return input.slice(match[0].length)
 }
+// console.log(spaceTrim(' \t\n\rabc'))
 
 // null parser
 function nullParser (input) {
@@ -77,6 +79,7 @@ function stringParser (input) {
 
 // comma parser
 function commaParser (input) {
+  input = spaceTrim(input)
   if (!input.startsWith(',')) { return null }
   return [',', input.slice(1)]
 }
@@ -84,6 +87,7 @@ function commaParser (input) {
 // value parser
 function valueParser (input) {
   let parser = null
+  input = spaceTrim(input)
   const num = ['-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
   if (input.startsWith('n')) { parser = nullParser }
   if (input.startsWith('t') || input.startsWith('f')) { parser = booleanParser }
@@ -102,55 +106,71 @@ function arrayParser (input) {
   input = spaceTrim(input)
   const arr = []
   if (!input.startsWith('[')) { return null }
-  if (input[1] === ' ' && input[2] === ']') { return [arr, input.slice(3)] } // empty array has a space
-  input = input.slice(1)
+  input = input.slice(1) // update input by removing '['
+  input = spaceTrim(input)
+  if (input[0] === ']') { return [arr, input.slice(1)] } // empty array
   while (input[0] !== undefined) {
-    if (input[0] === ']') { return [arr, input.slice(1)] }
-    let val = valueParser(input)
-    if (val === null) { return null }
-    arr.push(val[0])
-    input = val[1]
-    val = commaParser(input)
-    if (val === null) {
+    // if (input[0] === ']') { return [arr, input.slice(1)] }
+    const parsedVal = valueParser(input)
+    if (parsedVal === null) { return null }
+    arr.push(parsedVal[0])
+    input = parsedVal[1]
+    const parsed = commaParser(input)
+    if (parsed === null) {
+      input = spaceTrim(input)
       if (input[0] !== ']') { return null } // if no comma array should end
-    } else {
-      if (input[1] === ']') { return null } // after comma we cant have ]
-      input = val[1]
+      if (input[0] === ']') { return [arr, input.slice(1)] }
     }
+    input = parsed[1]
   }
   return null
 }
+
+// const input = '[1, [2,3,4],null,"abc",true]xyz'
+// console.log(arrayParser(input))
 
 // object parser
 function objectParser (input) {
   input = spaceTrim(input)
   const obj = {}
   if (!input.startsWith('{')) { return null }
-  if (input[1] === ' ' && input[2] === '}') { return [obj, input.slice(3)] }
   input = input.slice(1)
+  input = spaceTrim(input)
+  if (input[0] === '}') { return [obj, input.slice(1)] }
   do {
-    if (input[0] !== ' ') { return null }
-    input = input.slice(1)
-    if (input[0] === '}') { return [obj, input.slice(1)] }
-    if (input[0] !== '"') { return null }
+    if (input[0] !== '"') { return null } // key is a string
     let parsed = stringParser(input)
     if (parsed === null) { return null }
-    const key = parsed[0]
+    const key = parsed[0] // key is objects property
     input = parsed[1]
-    if (input[0] !== ' ') { return null }
-    input = input.slice(1)
-    if (input[0] !== ':') { return null }
-    input = input.slice(1)
-    parsed = valueParser(input)
-    const val = parsed[0]
+    input = spaceTrim(input)
+    if (input[0] !== ':') { return null } // key should be followed by :
+    input = input.slice(1) // remove : from input
+    parsed = valueParser(input) // parsing value after colon
+    if (parsed === null) { return null }
+    const val = parsed[0] // val is properties value
     input = parsed[1]
     obj[key] = val
+    input = spaceTrim(input)
     if (input.startsWith('}')) { return [obj, input.slice(1)] }
-    if (!input.startsWith(',')) { return null }
-    input = input.slice(1)
+    if (!input.startsWith(',')) { return null } // bad JSON
+    input = input.slice(1) // remove , from input
+    input = spaceTrim(input)
   }
   while (input[0] !== undefined)
 }
 
-// const input = '{ "a" :{ "1" :"val"}, "b" :false, "c" :[1,null,3,["i","j"],{}], "d" :2}xyz'
+// const input = '{ "a" :{ "1" :"val"},"b" :false, "c" :[1,null,3,["i","j"],{}], "d" :2}xyz'
 // console.log(objectParser(input))
+
+function jsonParser (input) {
+  input = input.spaceTrim()
+  if (input.length === 0) { return '' }
+
+  const output = valueParser(input)
+  console.log(output)
+}
+
+const input = '{ "a" :{ "1" :"val"},"b" :false, "c" :[1,null,3,["i","j"],{}], "d" :2}"xyz"'
+console.log(jsonParser(input))
+// console.log(JSON.parse(input))
