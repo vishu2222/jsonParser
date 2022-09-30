@@ -42,13 +42,12 @@ function numberParser (input) {
 // string parser
 function stringParser (input) {
   input = spaceTrim(input)
-  if (!input.startsWith('"')) { return null }
   const escapeCharacters = {
     '"': '"',
-    '/': '/',
     '\\': '\\',
-    b: '\b',
-    f: '\f',
+    '/': '/',
+    b: '/b',
+    f: '/f',
     n: '\n',
     r: '\r',
     t: '\t',
@@ -56,26 +55,30 @@ function stringParser (input) {
   }
   let i = 0
   let str = ''
-  while (input[i + 1] !== undefined) { // while end of input string is not reached
+  let char = input[i]
+  if (char !== '"') { return null }
+  while (char !== undefined) {
     i += 1
-    let char = input[i]
-    if (char === '"') { return [str, input.slice(i + 1)] } // end of string?
+    char = input[i]
+    if (char === '"') { return [str, input.slice(i + 1)] }
     if (char === '\\') {
       i += 1
       char = input[i]
       if (!escapeCharacters.hasOwnProperty(char)) {
         return null
+      } else if (char !== 'u') {
+        str += escapeCharacters[char]
       } else if (char === 'u') {
         const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4] // input.slice(i+1,i+5)
-        if (temp.match(/[a-f0-9]{4}/i) === null) { return null }
+        if (temp.match(/[a-f0-9]{4}/i) === null) { return null } // validate hexcode
         str += String.fromCharCode(parseInt(temp, 16))
         i += 4
       }
-    }
-    str += char // for any code point other than \ or "
+    } else { str += char }
   }
   return null
 }
+// console.log(stringParser('"abced\\nefgh\\"ijk"123'))
 
 // comma parser
 function commaParser (input) {
@@ -138,13 +141,13 @@ function objectParser (input) {
   input = spaceTrim(input)
   if (input[0] === '}') { return [obj, input.slice(1)] }
   do {
-    if (input[0] !== '"') { return null } // key is a string
+    if (input[0] !== '"') { return null } // porperty is a string
     let parsed = stringParser(input)
     if (parsed === null) { return null }
     const key = parsed[0] // key is objects property
     input = parsed[1]
     input = spaceTrim(input)
-    if (input[0] !== ':') { return null } // key should be followed by :
+    if (input[0] !== ':') { return null } // porperty should be followed by :
     input = input.slice(1) // remove : from input
     parsed = valueParser(input) // parsing value after colon
     if (parsed === null) { return null }
@@ -164,13 +167,14 @@ function objectParser (input) {
 // console.log(objectParser(input))
 
 function jsonParser (input) {
-  input = input.spaceTrim()
-  if (input.length === 0) { return '' }
-
+  input = spaceTrim(input)
+  if (input.length === 0) { return null }
   const output = valueParser(input)
-  console.log(output)
+  if (output !== null && output[1] !== '') { return null }
+  return output[0]
 }
 
-const input = '{ "a" :{ "1" :"val"},"b" :false, "c" :[1,null,3,["i","j"],{}], "d" :2}"xyz"'
+const input = ' { "a" :{ "1" :"val"},"b" :false, "c" :[1,null,3,["i","j"],{}], "d" :2}'
+// const input = ''
 console.log(jsonParser(input))
 // console.log(JSON.parse(input))
