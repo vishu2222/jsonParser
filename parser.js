@@ -175,6 +175,6 @@ function jsonParser (input) {
 }
 
 const input = ' { "a" :{ "1" :"val"},"b" :false, "c" :[1,null,3,["i","j"],{}], "d" :2}'
-// const input = ''
+// const input = '"abcd"'
 console.log(jsonParser(input))
-// console.log(JSON.parse(input))
+console.log(JSON.parse(input))
