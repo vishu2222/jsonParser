@@ -47,7 +47,7 @@ function stringParser (input) {
     '"': '"',
     '/': '/',
     '\\': '\\',
-    b: '/b',
+    b: '\b',
     f: '\f',
     n: '\n',
     r: '\r',
