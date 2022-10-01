@@ -1,5 +1,5 @@
 // trim spaces
-function spaceTrim (input) {
+function spaceTrim (input) { // use trim
   const trimRegex = /^[\s\r]*/ // matches ' '\n\r\t
   const match = input.match(trimRegex)
   if (match === null) { return input }
@@ -42,6 +42,7 @@ function numberParser (input) {
 // string parser
 function stringParser (input) {
   input = spaceTrim(input)
+  if (input[0] !== '"') { return null }
   const escapeCharacters = {
     '"': '"',
     '\\': '\\',
@@ -56,7 +57,6 @@ function stringParser (input) {
   let i = 0
   let str = ''
   let char = input[i]
-  if (char !== '"') { return null }
   while (char !== undefined) {
     i += 1
     char = input[i]
@@ -66,7 +66,8 @@ function stringParser (input) {
       char = input[i]
       if (!escapeCharacters.hasOwnProperty(char)) {
         return null
-      } else if (char !== 'u') {
+      }
+      if (char !== 'u') {
         str += escapeCharacters[char]
       } else if (char === 'u') {
         const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4] // input.slice(i+1,i+5)
@@ -84,7 +85,7 @@ function stringParser (input) {
 function commaParser (input) {
   input = spaceTrim(input)
   if (!input.startsWith(',')) { return null }
-  return [',', input.slice(1)]
+  return [',', input.slice(1)] // return only input.slice
 }
 
 // value parser
@@ -107,8 +108,8 @@ function valueParser (input) {
 // Array parser
 function arrayParser (input) {
   input = spaceTrim(input)
-  const arr = []
   if (!input.startsWith('[')) { return null }
+  const arr = []
   input = input.slice(1) // update input by removing '['
   input = spaceTrim(input)
   if (input[0] === ']') { return [arr, input.slice(1)] } // empty array
@@ -141,19 +142,19 @@ function objectParser (input) {
   input = spaceTrim(input)
   if (input[0] === '}') { return [obj, input.slice(1)] }
   do {
-    if (input[0] !== '"') { return null } // porperty is a string
+    if (input[0] !== '"') { return null } // porperty is a string //not required
     let parsed = stringParser(input)
     if (parsed === null) { return null }
     const key = parsed[0] // key is objects property
-    input = parsed[1]
-    input = spaceTrim(input)
+    // input = parsed[1]
+    input = spaceTrim(parsed[1])
     if (input[0] !== ':') { return null } // porperty should be followed by :
-    input = input.slice(1) // remove : from input
-    parsed = valueParser(input) // parsing value after colon
+    // input = input.slice(1) // remove : from input
+    parsed = valueParser(input.slice(1)) // parsing value after colon
     if (parsed === null) { return null }
-    const val = parsed[0] // val is properties value
+    // const val = parsed[0] // val is properties value
     input = parsed[1]
-    obj[key] = val
+    obj[key] = parsed[0]
     input = spaceTrim(input)
     if (input.startsWith('}')) { return [obj, input.slice(1)] }
     if (!input.startsWith(',')) { return null } // bad JSON
@@ -178,3 +179,4 @@ const input = ' { "a" :{ "1" :"val"},"b" :false, "c" :[1,null,3,["i","j"],{}], "
 // const input = '"abcd"'
 console.log(jsonParser(input))
 console.log(JSON.parse(input))
+
