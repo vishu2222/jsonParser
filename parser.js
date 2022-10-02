@@ -41,9 +41,9 @@ function numberParser (input) {
 
 // string parser
 function stringParser (input) {
-  input = spaceTrim(input)
-  
-  if (input[0] !== '"') { return null }
+  input = input.trim()
+  if (!input.startsWith('"')) { return null } // string should start with "
+  input = input.slice(1)
   const escapeCharacters = {
     '"': '"',
     '\\': '\\',
@@ -55,31 +55,32 @@ function stringParser (input) {
     t: '\t',
     u: null
   }
-  let i = 0
   let str = ''
-  let char = input[i]
-  while (char !== undefined) {
-    i += 1
-    char = input[i]
-    if (char === '"') { return [str, input.slice(i + 1)] }
-    if (char === '\\') {
-      i += 1
-      char = input[i]
-      if (!escapeCharacters.hasOwnProperty(char)) {
-        return null
-      }
-      if (char !== 'u') {
-        str += escapeCharacters[char]
-      } else if (char === 'u') {
-        const temp = input[i + 1] + input[i + 2] + input[i + 3] + input[i + 4] // input.slice(i+1,i+5)
-        if (temp.match(/[a-f0-9]{4}/i) === null) { return null } // validate hexcode
+  const illegalEscReg = /[\n\t\b\f\r\u0000-\u001f]/ // \n\t\b\f\r may be removed
+  while (input[0] !== undefined) {
+    if (input[0] === '"') { return [str, input.slice(1)] }
+    if (input[0] !== '\\' && input[0].match(illegalEscReg) !== null) { return null } // they should be followed by a https://www.ietf.org/rfc/rfc4627.txt
+    if (input[0] === '\\') {
+      if (input[1] === 'u') {
+        const temp = input.slice(2, 6)
+        if (temp.match(/[a-f0-9]{4}/i) === null) { return null }
         str += String.fromCharCode(parseInt(temp, 16))
-        i += 4
+        input = input.slice(6)
+      } else if (escapeCharacters.hasOwnProperty(input[1])) {
+        str += escapeCharacters[input[1]]
+        input = input.slice(2)
+      } else { // if not " or illegal char or escape char
+        str += input[1]
+        input = input.slice(2)
       }
-    } else { str += char }
+    }
+    str += input[0]
+    input = input.slice(1)
   }
   return null
 }
+// const input = '"Illegal backslash escape: \\15"'
+// console.log(stringParser(input))
 
 // comma parser
 function commaParser (input) {
@@ -176,8 +177,8 @@ function jsonParser (input) {
   return output[0]
 }
 
-const input = '{"pass3": {"The": "must.","In": "It ."}}'
+// const input = '{"pass3": {"The": "must.","In": "It ."}}'
 // console.log(input)
-console.log(jsonParser(input))
+// console.log(jsonParser(input))
 // console.log(JSON.parse(input))
 // fail cases 15, 17, 18(working for JSON.parse), 26, 27, 28
