@@ -32,48 +32,42 @@ function numberParser (input) {
 
 // string parser
 function stringParser (input) {
-  input = input.trim()
-  if (!input.startsWith('"')) { return null } // string should start with "
-  input = input.slice(1)
-  const escapeCharacters = {
+  let str = ''
+  // const escChars = ['\\', 'n', 't', 'f', 'r', 'b', '/', 'u', '"']
+  const escChars = {
     '"': '"',
     '\\': '\\',
     '/': '/',
-    b: '/b',
-    f: '/f',
+    b: '\b',
+    f: '\f',
     n: '\n',
     r: '\r',
     t: '\t',
     u: null
   }
-  let str = ''
-  // const illegalEscReg = /[\n\t\b\f\r\u0000-\u001f]/ // \n\t\b\f\r may be removed
-  const illegalEscReg = /[\ca-\cz]/i // ctrl+A to crtl+X or \x01 through \x1A
-  while (input[0] !== undefined) {
-    if (input[0] === '"') { return [str, input.slice(1)] }
-    // console.log(input[0], input[0].match(illegalEscReg))
-    if (input[0] !== '\\' && input[0].match(illegalEscReg) !== null) { return null } // they should be followed by a https://www.ietf.org/rfc/rfc4627.txt
+  input = input.trim()
+  if (!input.startsWith('"')) { return null }
+  input = input.slice(1)
+  while (input[0]) {
+    if (input.startsWith('"')) { return [str, input.slice(1)] } // "
+    if (input[0].match(/[\u0000-\u001f]/i)) { return null } // control characters
     if (input[0] === '\\') {
       if (input[1] === 'u') {
         const temp = input.slice(2, 6)
-        if (temp.match(/[a-f0-9]{4}/i) === null) { return null }
+        if (temp.match(/[a-f0-9]{4}/i) === null) { return null } // validate hexcode
         str += String.fromCharCode(parseInt(temp, 16))
         input = input.slice(6)
-      } else if (escapeCharacters.hasOwnProperty(input[1])) {
-        str += escapeCharacters[input[1]]
+      } else if (Object.keys(escChars).includes(input[1])) {
+        str += escChars[input[1]]
         input = input.slice(2)
-      } else { // if not " or illegal char or escape char
-        str += input[1]
-        input = input.slice(2)
-      }
+      } else { return null } // anything else after / is invalid?
+    } else {
+      str += input[0]
+      input = input.slice(1)
     }
-    str += input[0]
-    input = input.slice(1)
   }
   return null
 }
-// const input = '"Illegal backslash escape: \x15"'
-// console.log(stringParser(input))
 
 // comma parser
 function commaParser (input) {
@@ -93,8 +87,8 @@ function valueParser (input) {
   if (input.startsWith('[')) { parser = arrayParser }
   if (input.startsWith('{')) { parser = objectParser }
   if (num.includes(input[0])) { parser = numberParser }
-  if (parser === null) { return null }
   // console.log(parser)
+  if (parser === null) { return null }
   const parsed = parser(input)
   if (parsed === null) { return null }
   return [parsed[0], parsed[1]]
@@ -151,24 +145,25 @@ function objectParser (input) {
   return null
 }
 
-function jsonParser (input) {
-  input = input.trim()
-  if (!input.startsWith('[') || !input.startsWith('{')) { return null }
-  if (input.length === 0) { return null }
-  const output = valueParser(input)
-  if (output === null) { return null }
-  if (output !== null && output[1] !== '') { return null }
-  return output[0]
-}
+// module.exports = {
+//   parser: function (input) {
+//     input = input.trim()
+//     if (!input.startsWith('[') || !input.startsWith('{')) { return null }
+//     if (input.length === 0) { return null }
+//     const output = valueParser(input)
+//     if (output === null) { return null }
+//     if (output !== null && output[1] !== '') { return null }
+//     return output[0]
+//   }
+// }
 
-module.exports = {
-  parser: function (input) {
-    input = input.trim()
-    if (input.length === 0) { return null }
-    const output = valueParser(input)
-    // console.log(input, output)
-    if (output === null) { return null }
-    if (output !== null && output[1] !== '') { return null }
-    if (output[0] !== null) { return 'pass' }
-  }
+function JSONParser (input) {
+  input = input.trim()
+  const parsedValue = arrayParser(input) || objectParser(input)
+  if (!parsedValue || parsedValue[1]) return null
+  return parsedValue[0]
 }
+const fs = require('fs')
+const data = fs.readFileSync('./test/pass5.json', 'utf8')
+console.log(JSONParser(data))
+// console.log('JSON.parse', JSON.parse(data))
