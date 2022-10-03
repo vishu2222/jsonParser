@@ -33,7 +33,6 @@ function numberParser (input) {
 // string parser
 function stringParser (input) {
   let str = ''
-  // const escChars = ['\\', 'n', 't', 'f', 'r', 'b', '/', 'u', '"']
   const escChars = {
     '"': '"',
     '\\': '\\',
@@ -49,7 +48,7 @@ function stringParser (input) {
   if (!input.startsWith('"')) { return null }
   input = input.slice(1)
   while (input[0]) {
-    if (input.startsWith('"')) { return [str, input.slice(1)] } // "
+    if (input.startsWith('"')) { return [str, input.slice(1)] }
     if (input[0].match(/[\u0000-\u001f]/i)) { return null } // control characters
     if (input[0] === '\\') {
       if (input[1] === 'u') {
@@ -60,7 +59,7 @@ function stringParser (input) {
       } else if (Object.keys(escChars).includes(input[1])) {
         str += escChars[input[1]]
         input = input.slice(2)
-      } else { return null } // anything else after / is invalid?
+      } else { return null } // anything else after \ is invalid?
     } else {
       str += input[0]
       input = input.slice(1)
@@ -98,17 +97,15 @@ function arrayParser (input) {
   input = input.trim()
   if (!input.startsWith('[')) { return null }
   const arr = []
-  input = input.slice(1) // update input by removing '['
-  input = input.trim()
+  input = input.slice(1).trim() // update input by removing '['
   if (input[0] === ']') { return [arr, input.slice(1)] } // empty array
   while (input[0] !== undefined) {
     const parsedVal = valueParser(input)
     if (parsedVal === null) { return null }
     arr.push(parsedVal[0])
-    input = parsedVal[1]
+    input = parsedVal[1].trim()
     const parsed = commaParser(input)
     if (parsed === null) {
-      input = input.trim()
       if (input[0] !== ']') { return null } // if no comma array should end
       if (input[0] === ']') { return [arr, input.slice(1)] }
     }
@@ -150,12 +147,14 @@ function JSONParser (input) {
   return parsedValue[0]
 }
 
+// fail cases
 const fs = require('fs')
 for (let i = 1; i <= 33; i++) {
   const data = fs.readFileSync(`./test/fail${i}.json`, 'utf8')
   console.log(`fail${i}`, JSONParser(data))
 }
 
+// pass cases
 for (let i = 1; i <= 5; i++) {
   const data = fs.readFileSync(`./test/pass${i}.json`, 'utf8')
   console.log(`pass${i}`, JSONParser(data))
