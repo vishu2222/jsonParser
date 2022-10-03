@@ -150,18 +150,13 @@ function JSONParser (input) {
   return parsedValue[0]
 }
 
-// const fs = require('fs')
-// const data = fs.readFileSync('./test/pass5.json', 'utf8')
-// console.log(JSONParser(data))
+const fs = require('fs')
+for (let i = 1; i <= 33; i++) {
+  const data = fs.readFileSync(`./test/fail${i}.json`, 'utf8')
+  console.log(`fail${i}`, JSONParser(data))
+}
 
-module.exports = {
-  parser: function (input) {
-    input = input.trim()
-    if (!input.startsWith('[') || !input.startsWith('{')) { return null }
-    if (input.length === 0) { return null }
-    const output = valueParser(input)
-    if (output === null) { return null }
-    if (output !== null && output[1] !== '') { return null }
-    return output[0]
-  }
+for (let i = 1; i <= 5; i++) {
+  const data = fs.readFileSync(`./test/pass${i}.json`, 'utf8')
+  console.log(`pass${i}`, JSONParser(data))
 }
