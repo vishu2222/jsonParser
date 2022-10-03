@@ -205,3 +205,103 @@ console.log(numParserPassCases, numParserfailCases)
 
   // const illegalEscReg = /[\n\t\b\f\r\u0000-\u001f]/ // \n\t\b\f\r may be removed
   // const illegalEscReg = /[\ca-\cz]/i // ctrl+A to crtl+X or \x01 through \x1A
+
+
+
+
+  // const input = 'a\x15'
+// console.log(input)
+// const escRegex = /.*\\x{1}.*/g
+// console.log(input.match(escRegex))
+
+// console.log(JSON.parse('"a\x1111"')) // \b \f \n  \r \t \v
+
+// const char = '\0x1F'
+// console.log(JSON.stringify(String.fromCharCode(char.charCodeAt(0))))
+// console.log(String.fromCharCode(char.charCodeAt(0)) === '\u0001')
+// const newRegex = /[\ca-\cz]/i // ctrl+A to crtl+X or \x01 through \x1A
+// const newRegex2 = /\\u0015/i
+// const newRegex3 = /[\ca-\cz\c@-\c_]/i // \c@ through \c_
+// console.log(char.match(newRegex))
+// console.log(char.match(newRegex2))
+// console.log(char.match(newRegex3))
+
+// console.log(JSON.parse('"\u0000"'))
+// console.log('\u0000'.length)
+
+// const escapeCharacters = {
+//     '"': '"',
+//     '\\': '\\',
+//     '/': '/',
+//     b: '/b',
+//     f: '/f',
+//     n: '\n',
+//     r: '\r',
+//     t: '\t',
+//     u: null
+//   }
+
+// const ch = ['\n', '\\']
+// const reg = /[\n\t\b\f\r\u0000-\uffff]/
+// ch.forEach(i => {
+// //   console.log(JSON.parse('"' + i + '"'))
+//   console.log(i.match(reg))
+// })
+
+// console.log(JSON.parse('"\\uf001"'))
+
+// const input = '["Illegal backslash escape: \x15"]'
+// console.log('\x15'.length)
+
+// string parser
+function stringParser (input) {
+  input = input.trim()
+  if (!input.startsWith('"')) { return null } // string should start with "
+  input = input.slice(1)
+  const escapeCharacters = {
+    '"': '"',
+    '\\': '\\',
+    '/': '/',
+    b: '/b',
+    f: '/f',
+    n: '\n',
+    r: '\r',
+    t: '\t',
+    u: null
+  }
+  let str = ''
+  // const illegalEscReg = /[\n\t\b\f\r\u0000-\u001f]/ // \n\t\b\f\r may be removed
+  // const illegalEscReg = /[\ca-\cz]/i // ctrl+A to crtl+X or \x01 through \x1A
+  while (input[0] !== undefined) {
+    if (input[0] === '"') { return [str, input.slice(1)] }
+    // if (input.match(illegalEscReg) !== null) { return null } // they should be followed by a https://www.ietf.org/rfc/rfc4627.txt
+    if (input[0] === '\\') {
+      if (input[1] === 'u') {
+        // const temp = 
+        if (input.slice(2, 6).match(/[a-f0-9]{4}/i) === null) { return null }
+        str += String.fromCharCode(parseInt(input.slice(2, 6), 16))
+        input = input.slice(6)
+      } else if (escapeCharacters.hasOwnProperty(input[1])) {
+        str += escapeCharacters[input[1]]
+        input = input.slice(2)
+      } else { // if not " or illegal char or escape char
+        return null
+      }
+    }
+    str += input[0]
+    input = input.slice(1)
+  }
+  return null
+}
+// const input = '"\u0123\u4567\u89AB\uCDEF\uabcd\uef4A"'
+// console.log(stringParser(input))
+// console.log(JSON.parse(input))
+
+// const input = '"	kkk	character	in	string	"'
+
+// console.log(input[0].match(/[\n\t\b\f\r\u0000-\u001f]/))
+
+// console.log(JSON.stringify('/'))
+// console.log(JSON.stringify('\/'))
+const input = '\x00ghjg'
+console.log(input[0].match(/[\u0000-\u001f]/i))
