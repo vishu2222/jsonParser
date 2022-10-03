@@ -87,7 +87,6 @@ function valueParser (input) {
   if (input.startsWith('[')) { parser = arrayParser }
   if (input.startsWith('{')) { parser = objectParser }
   if (num.includes(input[0])) { parser = numberParser }
-  // console.log(parser)
   if (parser === null) { return null }
   const parsed = parser(input)
   if (parsed === null) { return null }
@@ -103,7 +102,6 @@ function arrayParser (input) {
   input = input.trim()
   if (input[0] === ']') { return [arr, input.slice(1)] } // empty array
   while (input[0] !== undefined) {
-    // if (input[0] === ']') { return [arr, input.slice(1)] }
     const parsedVal = valueParser(input)
     if (parsedVal === null) { return null }
     arr.push(parsedVal[0])
@@ -145,25 +143,25 @@ function objectParser (input) {
   return null
 }
 
-// module.exports = {
-//   parser: function (input) {
-//     input = input.trim()
-//     if (!input.startsWith('[') || !input.startsWith('{')) { return null }
-//     if (input.length === 0) { return null }
-//     const output = valueParser(input)
-//     if (output === null) { return null }
-//     if (output !== null && output[1] !== '') { return null }
-//     return output[0]
-//   }
-// }
-
 function JSONParser (input) {
   input = input.trim()
   const parsedValue = arrayParser(input) || objectParser(input)
   if (!parsedValue || parsedValue[1]) return null
   return parsedValue[0]
 }
-const fs = require('fs')
-const data = fs.readFileSync('./test/pass5.json', 'utf8')
-console.log(JSONParser(data))
-// console.log('JSON.parse', JSON.parse(data))
+
+// const fs = require('fs')
+// const data = fs.readFileSync('./test/pass5.json', 'utf8')
+// console.log(JSONParser(data))
+
+module.exports = {
+  parser: function (input) {
+    input = input.trim()
+    if (!input.startsWith('[') || !input.startsWith('{')) { return null }
+    if (input.length === 0) { return null }
+    const output = valueParser(input)
+    if (output === null) { return null }
+    if (output !== null && output[1] !== '') { return null }
+    return output[0]
+  }
+}
