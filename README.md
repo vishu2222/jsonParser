@@ -5,7 +5,7 @@ strings, boolean, array and object are encoded inthe JSON string.
 in detail at [link](https://www.ietf.org/rfc/rfc4627.txt).
 
 ## Json parser
-* Input -> JSON string
+* Input -> JSON string (array or object) 
 * output -> parsed javaScript value or null for a bad JSON.
 
 ## Components
@@ -37,3 +37,5 @@ in detail at [link](https://www.ietf.org/rfc/rfc4627.txt).
 1) https://wesleytsai.io/2015/06/13/a-json-parser/#comment-3466547787
 2) https://www.json.org/json-en.html
 3) https://www.ietf.org/rfc/rfc4627.txt
+4) https://www.regular-expressions.info/nonprint.html
+5) https://www.rfc-editor.org/rfc/rfc7159#page-8
