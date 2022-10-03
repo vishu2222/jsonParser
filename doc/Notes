@@ -201,3 +201,7 @@ const numParserfailCases = ['a.', '.a', '-', 'e1', '.', '-+', 'abc198', 'a0', '-
 '+0.05']
 
 console.log(numParserPassCases, numParserfailCases)
+
+
+  // const illegalEscReg = /[\n\t\b\f\r\u0000-\u001f]/ // \n\t\b\f\r may be removed
+  // const illegalEscReg = /[\ca-\cz]/i // ctrl+A to crtl+X or \x01 through \x1A
