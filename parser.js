@@ -16,39 +16,8 @@ function numberParser (input) {
 }
 
 function stringParser (input) {
-  input = input.trim()
-  if (!input.startsWith('"')) { return null }
-  input = input.slice(1)
-  let str = ''
-  const escChars = {
-    '"': '"',
-    '\\': '\\',
-    '/': '/',
-    b: '\b',
-    f: '\f',
-    n: '\n',
-    r: '\r',
-    t: '\t',
-    u: null
-  }
-  while (input[0]) {
-    if (input[0] === '"') { return [str, input.slice(1)] } // " without escape occurs at end of string
-    if (input[0].match(/[\u0000-\u001f]/i)) { return null } // control characters
-    if (input[0] === '\\') { // escape / sould be followed by any of n,/,f,r,b,t,u,\"
-      if (input[1] === 'u') {
-        const temp = input.slice(2, 6)
-        if (temp.match(/[a-f0-9]{4}/i) === null) { return null } // validate hexcode
-        str += String.fromCharCode(parseInt(temp, 16))
-        input = input.slice(6)
-      } else if (Object.keys(escChars).includes(input[1])) {
-        str += escChars[input[1]]
-        input = input.slice(2)
-      } else { return null } // anything else after \ is invalid
-    } else {
-      str += input[0]
-      input = input.slice(1)
-    }
-  }
+  const output = input.match(/^"([^\\"\u0000-\u001f]|\\["\\bfnrt/]|\\u[0-9a-fA-F]{4})*"/)
+  if (output !== null) { return [output[0], input.slice(output[0].length)] }
   return null
 }
 
