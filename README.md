@@ -29,6 +29,7 @@ in detail at [link](https://www.ietf.org/rfc/rfc4627.txt).
 Also, when reading a string from a file, 'abc\ndef' does not have control char but <br>
 "abc<br>def" <br>
 has a control char.
+Thus this program works only when JSON string is read from a file rather than being passed directly with in the program through assignment.
 
 ### Array parser
     input : string
