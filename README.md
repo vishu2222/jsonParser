@@ -25,7 +25,7 @@ in detail at [link](https://www.ietf.org/rfc/rfc4627.txt).
     input : string
     output-> [sting, rest of the string] or null
     
-*Note*: when it comes to an input string containing '\'. Reading the input from a file has a different behaviour compared to assigning the input with in the program. For example if a test file contains the input string "abc\nabc" the back-slash is read as a seperate char '\\' (length = 1 ) and 'n' (length = 1 ) as seperate. But within the pogram if the exact string is assigned to input i.e, input = '"abc\nabc"', '\n' (length = 1)is read as a single character.
+*Note*: when it comes to an input string containing '\\'. Reading the input from a file has a different behaviour compared to assigning the input with in the program. For example if a test file contains the input string "abc\nabc" the back-slash is read as a seperate char '\\\\' (length = 1 ) and 'n' (length = 1 ) as seperate. But within the pogram if the exact string is assigned to input i.e, input = '"abc\nabc"', '\n' (length = 1)is read as a single character.
 Also, when reading a string from a file, 'abc\ndef' does not have control char but 
 "abc
 def"
