@@ -24,6 +24,7 @@ in detail at [link](https://www.ietf.org/rfc/rfc4627.txt).
 ### String parser
     input -> string
     output-> [sting, rest of the string] or null
+    Note: when it comes to input containing '\', reading the input from a file has a different behaviour compared to assigning the input with in the program.
 
 ### Array parser
     input -> string
